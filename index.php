@@ -123,7 +123,7 @@
                 <small><span id="charCount">0</span>/200 characters</small><br><br>
             
                 <label for="date">Preferred Adoption Date :- </label>
-                <input type="date" id="date" required/><br><br>
+                <input type="date" id="date" name="date" required/><br><br>
             
                 <div class="d-grid gap-2 col-6 mx-auto">
                     <button type="submit" class="btn btn-outline-info">Submit</button>
