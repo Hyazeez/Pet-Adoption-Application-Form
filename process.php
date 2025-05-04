@@ -1,8 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Safely get all POST data
     $name = $_POST['name'] ?? '';
     $age = $_POST['age'] ?? 0;
     $email = $_POST['email'] ?? '';
@@ -14,27 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $experience = $_POST['experience'] ?? '';
     $date = $_POST['date'] ?? date('Y-m-d');
 
+    // Insert into DB
+    $sql = "INSERT INTO applications2 
+            (name, age, email, mobile, address, pet_type, pet_gender, housing, experience, date_applied)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try {
-        $sql = "INSERT INTO applications (name, age, email, mobile, address, pet_type, pet_gender, housing_type, experience, adoption_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
         $stmt->bind_param("sissssssss", $name, $age, $email, $mobile, $address, $petType, $petGender, $housing, $experience, $date);
-
         if ($stmt->execute()) {
-            echo "<script>alert('Application submitted!'); window.location.href='index.php';</script>";
+            echo "Application submitted successfully!";
         } else {
-            throw new Exception($conn->error);
+            echo "Error: " . $stmt->error;
         }
-    } catch (Exception $e) {
-        echo "<script>alert('Error: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
-    } finally {
         $stmt->close();
-        $conn->close();
+    } else {
+        echo "Statement Preparation Failed: " . $conn->error;
     }
-} else {
-    header("Location: index.php");
-    exit();
+
+    $conn->close();
 }
 ?>
